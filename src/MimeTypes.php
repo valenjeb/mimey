@@ -8,10 +8,10 @@ namespace Mimey;
 class MimeTypes implements MimeTypesInterface
 {
 	/** @var array The cached built-in mapping array. */
-	private static $built_in;
+	private static array $built_in;
 
 	/** @var array The mapping array. */
-	protected $mapping;
+	protected array $mapping;
 
 	/**
 	 * Create a new mime types instance with the given mappings.
@@ -37,7 +37,7 @@ class MimeTypes implements MimeTypesInterface
 	 * )
 	 * </code>
 	 */
-	public function __construct($mapping = null)
+	public function __construct(?array $mapping = null)
 	{
 		if ($mapping === null) {
 			$this->mapping = self::getBuiltIn();
@@ -49,8 +49,8 @@ class MimeTypes implements MimeTypesInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getMimeType($extension)
-	{
+	public function getMimeType(string $extension): ?string
+    {
 		$extension = $this->cleanInput($extension);
 		if (!empty($this->mapping['mimes'][$extension])) {
 			return $this->mapping['mimes'][$extension][0];
@@ -61,8 +61,8 @@ class MimeTypes implements MimeTypesInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getExtension($mime_type)
-	{
+	public function getExtension(string $mime_type): ?string
+    {
 		$mime_type = $this->cleanInput($mime_type);
 		if (!empty($this->mapping['extensions'][$mime_type])) {
 			return $this->mapping['extensions'][$mime_type][0];
@@ -73,8 +73,8 @@ class MimeTypes implements MimeTypesInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getAllMimeTypes($extension)
-	{
+	public function getAllMimeTypes(string $extension): array
+    {
 		$extension = $this->cleanInput($extension);
 		if (isset($this->mapping['mimes'][$extension])) {
 			return $this->mapping['mimes'][$extension];
@@ -85,8 +85,8 @@ class MimeTypes implements MimeTypesInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getAllExtensions($mime_type)
-	{
+	public function getAllExtensions(string $mime_type): array
+    {
 		$mime_type = $this->cleanInput($mime_type);
 		if (isset($this->mapping['extensions'][$mime_type])) {
 			return $this->mapping['extensions'][$mime_type];
@@ -99,9 +99,9 @@ class MimeTypes implements MimeTypesInterface
 	 *
 	 * @return array The built-in mapping.
 	 */
-	protected static function getBuiltIn()
+	protected static function getBuiltIn(): array
 	{
-		if (self::$built_in === null) {
+		if (! isset(self::$built_in)) {
 			self::$built_in = require(dirname(__DIR__) . '/mime.types.php');
 		}
 		return self::$built_in;
@@ -114,7 +114,7 @@ class MimeTypes implements MimeTypesInterface
 	 *
 	 * @return string The normalized string.
 	 */
-	private function cleanInput($input)
+	private function cleanInput(string $input): string
 	{
 		return strtolower(trim($input));
 	}

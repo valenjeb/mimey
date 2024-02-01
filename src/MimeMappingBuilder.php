@@ -8,14 +8,14 @@ namespace Mimey;
 class MimeMappingBuilder
 {
 	/** @var array The mapping array. */
-	protected $mapping;
+	protected array $mapping;
 
 	/**
 	 * Create a new mapping builder.
 	 *
 	 * @param array $mapping An associative array containing two entries. See `MimeTypes` constructor for details.
 	 */
-	private function __construct($mapping)
+	private function __construct(array $mapping = [])
 	{
 		$this->mapping = $mapping;
 	}
@@ -28,7 +28,7 @@ class MimeMappingBuilder
 	 * @param bool   $prepend_extension Whether this should be the preferred conversion for MIME type to extension.
 	 * @param bool   $prepend_mime Whether this should be the preferred conversion for extension to MIME type.
 	 */
-	public function add($mime, $extension, $prepend_extension = true, $prepend_mime = true)
+	public function add(string $mime, string $extension, bool $prepend_extension = true, bool $prepend_mime = true)
 	{
 		$existing_extensions = empty($this->mapping['extensions'][$mime]) ? array() : $this->mapping['extensions'][$mime];
 		$existing_mimes = empty($this->mapping['mimes'][$extension]) ? array() : $this->mapping['mimes'][$extension];
@@ -49,7 +49,7 @@ class MimeMappingBuilder
 	/**
 	 * @return array The mapping.
 	 */
-	public function getMapping()
+	public function getMapping(): array
 	{
 		return $this->mapping;
 	}
@@ -59,7 +59,7 @@ class MimeMappingBuilder
 	 *
 	 * @return string The compiled PHP code to save to a file.
 	 */
-	public function compile()
+	public function compile(): string
 	{
 		$mapping = $this->getMapping();
 		$mapping_export = var_export($mapping, true);
@@ -75,7 +75,7 @@ class MimeMappingBuilder
 	 *
 	 * @return int|bool The number of bytes that were written to the file, or false on failure.
 	 */
-	public function save($file, $flags = 0, $context = null)
+	public function save(string $file, int $flags = 0, $context = null)
 	{
 		return file_put_contents($file, $this->compile(), $flags, $context);
 	}
@@ -85,7 +85,7 @@ class MimeMappingBuilder
 	 *
 	 * @return MimeMappingBuilder A mapping builder with built-in types loaded.
 	 */
-	public static function create()
+	public static function create(): self
 	{
 		return self::load(dirname(__DIR__) . '/mime.types.php');
 	}
@@ -97,7 +97,7 @@ class MimeMappingBuilder
 	 *
 	 * @return MimeMappingBuilder A mapping builder with types loaded from a file.
 	 */
-	public static function load($file)
+	public static function load(string $file): self
 	{
 		return new self(require($file));
 	}
@@ -107,7 +107,7 @@ class MimeMappingBuilder
 	 *
 	 * @return MimeMappingBuilder A mapping builder with no types defined.
 	 */
-	public static function blank()
+	public static function blank(): self
 	{
 		return new self(array('mimes' => array(), 'extensions' => array()));
 	}
