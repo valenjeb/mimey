@@ -10,8 +10,8 @@ class MimeTypesTest extends TestCase
 	/** @var \Mimey\MimeTypes */
 	protected $mime;
 
-	protected function setUp()
-	{
+	protected function setUp(): void
+    {
 		$this->mime = new MimeTypes([
 			'mimes' => [
 				'json' => ['application/json'],
